@@ -1,31 +1,33 @@
-2023-06-19 09:05:29 - luigi - INFO - logging configured via *.conf file
-2023-06-19 09:05:29 - luigi-interface - DEBUG - Checking if FetchDataFromAPI(json_url=https://jsonplaceholder.typicode.com/posts, output_path=data/dump.json) is complete
-2023-06-19 09:05:29 - luigi-interface - INFO - Informed scheduler that task   FetchDataFromAPI_https___jsonplac_data_dump_json_9c82b71723   has status   PENDING
-2023-06-19 09:05:29 - luigi-interface - INFO - Done scheduling tasks
-2023-06-19 09:05:29 - luigi-interface - INFO - Running Worker with 1 processes
-2023-06-19 09:05:29 - luigi-interface - DEBUG - Asking scheduler for work...
-2023-06-19 09:05:29 - luigi.scheduler - DEBUG - Starting pruning of task graph
-2023-06-19 09:05:29 - luigi.scheduler - DEBUG - Done pruning task graph
-2023-06-19 09:05:29 - luigi-interface - DEBUG - Pending tasks: 1
-2023-06-19 09:05:29 - luigi-interface - INFO - [pid 68638] Worker Worker(salt=519757513, workers=1, host=nabegh-XPS-15-9570, username=nabegh, pid=68638) running   FetchDataFromAPI(json_url=https://jsonplaceholder.typicode.com/posts, output_path=data/dump.json)
-2023-06-19 09:05:29 - luigi-interface - INFO - Starting Luigi task to fetch data from API
-2023-06-19 09:05:29 - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): jsonplaceholder.typicode.com:443
-2023-06-19 09:05:29 - urllib3.connectionpool - DEBUG - https://jsonplaceholder.typicode.com:443 "GET /posts HTTP/1.1" 200 None
-2023-06-19 09:05:29 - luigi-interface - INFO - [pid 68638] Worker Worker(salt=519757513, workers=1, host=nabegh-XPS-15-9570, username=nabegh, pid=68638) done      FetchDataFromAPI(json_url=https://jsonplaceholder.typicode.com/posts, output_path=data/dump.json)
-2023-06-19 09:05:29 - luigi-interface - DEBUG - 1 running tasks, waiting for next task to finish
-2023-06-19 09:05:29 - luigi-interface - INFO - Informed scheduler that task   FetchDataFromAPI_https___jsonplac_data_dump_json_9c82b71723   has status   DONE
-2023-06-19 09:05:29 - luigi-interface - DEBUG - Asking scheduler for work...
-2023-06-19 09:05:29 - luigi.scheduler - DEBUG - Starting pruning of task graph
-2023-06-19 09:05:29 - luigi.scheduler - DEBUG - Done pruning task graph
-2023-06-19 09:05:29 - luigi-interface - DEBUG - Done
-2023-06-19 09:05:29 - luigi-interface - DEBUG - There are no more tasks to run at this time
-2023-06-19 09:05:29 - luigi-interface - INFO - Worker Worker(salt=519757513, workers=1, host=nabegh-XPS-15-9570, username=nabegh, pid=68638) was stopped. Shutting down Keep-Alive thread
-2023-06-19 09:05:29 - luigi-interface - INFO - 
+2023-06-19 22:13:14 - luigi - INFO - logging configured via *.conf file
+2023-06-19 22:13:14 - luigi-interface - DEBUG - Checking if DataTransformationTask(json_url=https://jsonplaceholder.typicode.com/posts, json_path=data/dump.json, stagging_path=data/dump_stagging.parquet, transformation_path=data/dump_transformed.parquet) is complete
+2023-06-19 22:13:14 - luigi-interface - DEBUG - Checking if DataCleaningTask(json_url=https://jsonplaceholder.typicode.com/posts, json_path=data/dump.json, stagging_path=data/dump_stagging.parquet) is complete
+2023-06-19 22:13:14 - luigi-interface - INFO - Informed scheduler that task   DataTransformationTask_data_dump_json_https___jsonplac_data_dump_staggi_dfcda5fc5d   has status   PENDING
+2023-06-19 22:13:14 - luigi-interface - INFO - Informed scheduler that task   DataCleaningTask_data_dump_json_https___jsonplac_data_dump_staggi_6f523c2454   has status   DONE
+2023-06-19 22:13:14 - luigi-interface - INFO - Done scheduling tasks
+2023-06-19 22:13:14 - luigi-interface - INFO - Running Worker with 1 processes
+2023-06-19 22:13:14 - luigi-interface - DEBUG - Asking scheduler for work...
+2023-06-19 22:13:14 - luigi.scheduler - DEBUG - Starting pruning of task graph
+2023-06-19 22:13:14 - luigi.scheduler - DEBUG - Done pruning task graph
+2023-06-19 22:13:14 - luigi-interface - DEBUG - Pending tasks: 1
+2023-06-19 22:13:14 - luigi-interface - INFO - [pid 11769] Worker Worker(salt=475745918, workers=1, host=nabegh-XPS-15-9570, username=nabegh, pid=11769) running   DataTransformationTask(json_url=https://jsonplaceholder.typicode.com/posts, json_path=data/dump.json, stagging_path=data/dump_stagging.parquet, transformation_path=data/dump_transformed.parquet)
+2023-06-19 22:13:14 - parquet - DEBUG - Using json encoder/decoder
+2023-06-19 22:13:14 - luigi-interface - INFO - [pid 11769] Worker Worker(salt=475745918, workers=1, host=nabegh-XPS-15-9570, username=nabegh, pid=11769) done      DataTransformationTask(json_url=https://jsonplaceholder.typicode.com/posts, json_path=data/dump.json, stagging_path=data/dump_stagging.parquet, transformation_path=data/dump_transformed.parquet)
+2023-06-19 22:13:14 - luigi-interface - DEBUG - 1 running tasks, waiting for next task to finish
+2023-06-19 22:13:14 - luigi-interface - INFO - Informed scheduler that task   DataTransformationTask_data_dump_json_https___jsonplac_data_dump_staggi_dfcda5fc5d   has status   DONE
+2023-06-19 22:13:14 - luigi-interface - DEBUG - Asking scheduler for work...
+2023-06-19 22:13:14 - luigi.scheduler - DEBUG - Starting pruning of task graph
+2023-06-19 22:13:14 - luigi.scheduler - DEBUG - Done pruning task graph
+2023-06-19 22:13:14 - luigi-interface - DEBUG - Done
+2023-06-19 22:13:14 - luigi-interface - DEBUG - There are no more tasks to run at this time
+2023-06-19 22:13:14 - luigi-interface - INFO - Worker Worker(salt=475745918, workers=1, host=nabegh-XPS-15-9570, username=nabegh, pid=11769) was stopped. Shutting down Keep-Alive thread
+2023-06-19 22:13:14 - luigi-interface - INFO - 
 ===== Luigi Execution Summary =====
 
-Scheduled 1 tasks of which:
+Scheduled 2 tasks of which:
+* 1 complete ones were encountered:
+    - 1 DataCleaningTask(json_url=https://jsonplaceholder.typicode.com/posts, json_path=data/dump.json, stagging_path=data/dump_stagging.parquet)
 * 1 ran successfully:
-    - 1 FetchDataFromAPI(json_url=https://jsonplaceholder.typicode.com/posts, output_path=data/dump.json)
+    - 1 DataTransformationTask(json_url=https://jsonplaceholder.typicode.com/posts, json_path=data/dump.json, stagging_path=data/dump_stagging.parquet, transformation_path=data/dump_transformed.parquet)
 
 This progress looks :) because there were no failed tasks or missing dependencies
 
