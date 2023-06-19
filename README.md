@@ -21,7 +21,7 @@ This demonstration project was built and ran locally.
 
 # Tasks
 
-# Task 1
+## Task 1
 The first task was to:
 
 Create a Luigi Task that fetches data from the JSONPlaceholder API. The task should have the
@@ -39,3 +39,6 @@ Each point was achieved by constructing a Luigi task that:
 - Uses try and except to catch and log network error.
 - Has two layers of retrial one native to the `request` package and one through configuring Luigi's scheduler as shown in `luigi.cfg`.
 - Task is idempotent as the output file is recorded in the overriden `output` function of Luigi which natively ensures that the task is idempotent.
+
+**Improvements**:
+1. Unit tests could be improved by using `luigi.MockTarget` to test writing to a file instead of creating a tmp file.
