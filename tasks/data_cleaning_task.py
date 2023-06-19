@@ -1,6 +1,4 @@
 import luigi
-import requests
-import json
 import logging
 import pandas as pd
 import numpy as np
