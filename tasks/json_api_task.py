@@ -10,10 +10,10 @@ class FetchDataFromAPI(luigi.Task):
     # output_path = "data.json"  # Output file path
     # json_path = "https://jsonplaceholder.typicode.com/posts"
     json_url = luigi.Parameter()
-    output_path = luigi.Parameter()
+    json_local_path = luigi.Parameter()
 
     def output(self):
-        return luigi.LocalTarget(self.output_path)
+        return luigi.LocalTarget(self.json_local_path)
 
     def run(self):
         logger.info("Starting Luigi task to fetch data from API")
