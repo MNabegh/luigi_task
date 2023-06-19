@@ -16,8 +16,7 @@ This demonstration project was built and ran locally.
 
 1. Install Luigi framework.
 1. Add this directory and the task directory to the `$PYTHONPATH` environment variable.
-1. Install python `request` package.
-1. Install python `unittest` package to run the tests.
+1. Install python `request`, `unittest`, `pandas`, `luigi`, `numpy`, `fastparquet` packages.
 
 # Tasks
 
