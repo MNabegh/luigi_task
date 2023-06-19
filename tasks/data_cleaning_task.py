@@ -28,7 +28,7 @@ class DataCleaningTask(luigi.Task):
     def run(self):
         self.read_data()
 
-        # Data Validation
+        # Data Validation: Checks for corrupted data that might affect the logic later on
         expected_schema = pd.Series({'userId': np.dtype(int), 'id': np.dtype(
             int), 'title': np.dtype('O'), 'body': np.dtype('O')})
         self.validate_schema(expected_schema)
