@@ -10,15 +10,15 @@ logger = logging.getLogger("luigi-interface")
 
 
 class DataCleaningTask(luigi.Task):
-    json_url = luigi.Parameter()
+    url_to_json_file = luigi.Parameter()
     json_path = luigi.Parameter()
     staging_path = luigi.Parameter()
 
     def requires(self):
-        return FetchDataFromAPI(self.json_url, self.json_path)
+        return FetchDataFromAPI(self.url_to_json_file, self.json_path)
 
     def output(self):
-        return luigi.LocalTarget(self.stagging_path)
+        return luigi.LocalTarget(self.staging_path)
 
     def run(self):
         self.read_data()
