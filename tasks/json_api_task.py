@@ -7,9 +7,7 @@ logger = logging.getLogger("luigi-interface")
 
 
 class FetchDataFromAPI(luigi.Task):
-    # output_path = "data.json"  # Output file path
-    # json_path = "https://jsonplaceholder.typicode.com/posts"
-    json_url = luigi.Parameter()
+    url_to_json_file = luigi.Parameter()
     json_local_path = luigi.Parameter()
 
     def output(self):
@@ -18,21 +16,33 @@ class FetchDataFromAPI(luigi.Task):
     def run(self):
         logger.info("Starting Luigi task to fetch data from API")
         self.request_file()
+
+        logger.info("JSON file retrieved, writing to disk")
         self.write_output()
+
+        logger.info("JSON file has been written to disk")
 
     def request_file(self):
         try:
-            response = requests.get(self.json_url)
+            response = requests.get(self.url_to_json_file)
             response.raise_for_status()  # Raise an exception if response status is not 2xx
 
             self.data = response.json()
 
-        except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
-            # Handle network failures or JSON decoding errors
-            logger.warning("Network Failure")
-            raise Exception(f"Failed to fetch data from API on retry: {str(e)}")
+        except requests.exceptions.RequestException as e:
+            raise Exception(
+                f"Failed to fetch data from API on retry: {str(e)}")
+
+        except json.JSONDecodeError as e:
+            raise Exception(f"Failed to decode JSON data: {str(e)}")
 
     def write_output(self):
         # Save the data to a local file
-        with self.output().open("w") as f:
-            json.dump(self.data, f)
+        try:
+            with self.output().open("w") as f:
+                json.dump(self.data, f)
+
+        except Exception as e:
+            logger.error(
+                f"An error occurred while writing to the file: {str(e)}"
+            )
