@@ -25,7 +25,9 @@ class DataCleaningTask(luigi.Task):
         self.read_data()
 
         logger.info(
-            "Validating data format is as expected and will not break production before loading it for business")
+            "Validating data format is as expected and will not break production before loading it for business"
+        )
+
         expected_schema = pd.Series({
             "userId": np.dtype(int),
             "id": np.dtype(int),
@@ -40,8 +42,7 @@ class DataCleaningTask(luigi.Task):
         int_cols = ["userId"]
         self.validate_int_values(int_cols)
 
-        logger.info(
-            "Check and ensure data completness and consistency")
+        logger.info("Check and ensure data completness and consistency")
         self.check_and_fill_na()
 
         unique_columns_combination = ["userId", "id"]
@@ -52,6 +53,7 @@ class DataCleaningTask(luigi.Task):
 
         logger.info("Data is complete, writing to stagging layer")
         self.write_output()
+        logger.info("Cleaned data has been written to the stagging layer")
 
     def read_data(self):
         self.df = pd.read_json(self.json_path)
