@@ -27,16 +27,16 @@ class LoadDataToDatabaseTask(luigi.Task):
         return DatabaseLoadedTarget(self.db_connection_string, self.table_name)
 
     def run(self):
-        # Read the cleaned data from the Parquet file
-        cleaned_data = pd.read_parquet(self.transformation_path)
+        # Read the transformed data from the Parquet file
+        transformed_data = pd.read_parquet(self.transformation_path)
 
         # Connect to the database
         conn = sqlite3.connect(self.db_connection_string)
         cursor = conn.cursor()
 
         # Insert the cleaned data into the database table
-        cleaned_data.to_sql(self.table_name, conn,
-                            if_exists='replace', index=False)
+        transformed_data.to_sql(self.table_name, conn,
+                                if_exists='replace', index=False)
 
         # Commit the changes and close the connection
         conn.commit()
