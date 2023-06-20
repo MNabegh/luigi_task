@@ -15,10 +15,12 @@ class FetchDataFromAPI(luigi.Task):
 
     def run(self):
         logger.info("Starting Luigi task to fetch data from API")
+        self.data = None
         self.request_file()
 
         logger.info("JSON file retrieved, writing to disk")
-        self.write_output()
+        if self.data is not None:
+            self.write_output()
 
         logger.info("JSON file has been written to disk")
 
@@ -30,8 +32,7 @@ class FetchDataFromAPI(luigi.Task):
             self.data = response.json()
 
         except requests.exceptions.RequestException as e:
-            raise Exception(
-                f"Failed to fetch data from API on retry: {str(e)}")
+            raise Exception(f"Failed to fetch data from API on retry: {str(e)}")
 
         except json.JSONDecodeError as e:
             raise Exception(f"Failed to decode JSON data: {str(e)}")
@@ -43,6 +44,4 @@ class FetchDataFromAPI(luigi.Task):
                 json.dump(self.data, f)
 
         except Exception as e:
-            logger.error(
-                f"An error occurred while writing to the file: {str(e)}"
-            )
+            logger.error(f"An error occurred while writing to the file: {str(e)}")
