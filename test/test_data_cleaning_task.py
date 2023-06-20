@@ -36,20 +36,22 @@ class TestYourClass(unittest.TestCase):
     def test_validate_str_values(self):
         # Test when all string columns contain only strings
         str_cols = ["col2"]
-        self.assertTrue(self.obj.validate_str_values(str_cols))
+        self.assertIsNone(self.obj.validate_str_values(str_cols))
 
         # Test when a string column contains non-string values
         invalid_cols = ["col1"]
-        self.assertFalse(self.obj.validate_str_values(invalid_cols))
+        with self.assertRaises(Exception) as context:
+            self.obj.validate_str_values(invalid_cols)
 
     def test_validate_int_values(self):
         # Test when all integer columns contain values within the range
         int_cols = ["col1"]
-        self.assertTrue(self.obj.validate_int_values(int_cols))
+        self.assertIsNone(self.obj.validate_int_values(int_cols))
 
         # Test when an integer column contains out-of-range values
         invalid_cols = ["col3"]
-        self.assertFalse(self.obj.validate_int_values(invalid_cols))
+        with self.assertRaises(Exception) as context:
+            self.obj.validate_int_values(invalid_cols)
 
     def test_is_string_series(self):
         # Test when the series is a string series
@@ -84,13 +86,13 @@ class TestYourClass(unittest.TestCase):
         self.assertEqual(self.obj.df.shape[0], 4)
 
         # Perform check and drop duplicates
-        self.obj.check_and_drop_duplicates(subset=["col1", "col3"])
+        self.obj.check_and_drop_duplicates(["col1", "col3"])
 
         # Assert that the dataframe has 3 rows
         self.assertEqual(self.obj.df.shape[0], 3)
 
         # Assert that the dataframe has 3 rows
-        self.assertEquals(self.obj.df["col1"].to_list(), [1, 2, 3])
+        self.assertEqual(self.obj.df["col1"].to_list(), [1, 2, 3])
 
     def test_transform_all_strings_to_lower_case(self):
         self.assertEqual(self.obj.df["col2"][0], "A")
