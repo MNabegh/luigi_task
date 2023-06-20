@@ -1,6 +1,3 @@
-python -m unittest test.json_api_fetch_test
-luigi --module json_api_task FetchDataFromAPI --local-scheduler --json-url https://jsonplaceholder.typicode.com/posts --output-path data/dump
-
 # Luigi Data Pipeline
 
 This is a solution for the demonstration task of building a data pipeline that fetches data from the JSONPlaceholder API,
