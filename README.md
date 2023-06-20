@@ -1,6 +1,5 @@
 python -m unittest test.json_api_fetch_test
-everything was added to PYTHONPATH
-luigi --module json_api_task FetchDataFromAPI --local-scheduler --json-url https://jsonplaceholder.typicode.com/posts --output-path data/dump.json
+luigi --module json_api_task FetchDataFromAPI --local-scheduler --json-url https://jsonplaceholder.typicode.com/posts --output-path data/dump
 
 # Luigi Data Pipeline
 
@@ -12,32 +11,42 @@ implementing basic data quality checks.
 This demonstration project was built and ran locally.
 
 
-# Prerequistes to run it.
+## Prerequistes to run it.
 
 1. Install Luigi framework.
-1. Add this directory and the task directory to the `$PYTHONPATH` environment variable.
-1. Install python `request`, `unittest`, `pandas`, `luigi`, `numpy`, `fastparquet` packages.
+1. Add this directory and the task directory to the `$PYTHONPATH` environment variable by running the command `export PYTHONPATH=$(pwd):$(pwd)/tasks` in the root directory for this project on Linux machines.
+1. Install python required packages using `requirements.txt` by running the command `pip install -r requirements.txt`.
+1. Create SQL lite database.
+1. Create SQL lite table.
 
-# Tasks
+## Workflow
 
-## Task 1
-The first task was to:
+This project has one Luigi workflow that can be run from the root directory of the project to:
+1. Fetch JSON data from an API (`json_api_task.py`)
+1. Validate the data quality (`data_cleaning_task.py`)
+1. Clean the data and write it to stagging layer  (`data_cleaning_task.py`)
+1. Transform the data to analytics format  (`data_transformation_task.py`)
+1. Load the transformed data into a database (`load_data_into_db_task.py`)
 
-Create a Luigi Task that fetches data from the JSONPlaceholder API. The task should have the
-following properties:
-- Use the API endpoint https://jsonplaceholder.typicode.com/posts to retrieve data.
-- Fetch the data and save it to a local file (e.g., JSON format).
-- Implement basic error handling and retries in case of network failures or other errors.
-- Ensure that the task is idempotent, meaning it can be run multiple times without duplicating
-data.
+The workflow is in the file `luigi_workflow.py`
 
+To run the workflow use the command `luigi --module luigi_workflow LuigiWorkflow --json-path <json_path_to_save_downloaded_file> --staging-path <parquet_path_to_save_staged_data>  --url-to-json-file https://jsonplaceholder.typicode.com/posts --transformation-path <parquet_path_to_save_transformed_data> --db-connection-string <path_to_connect_to_db> --table-name <db_table_name>`
 
-Each point was achieved by constructing a Luigi task that:
-- Uses python's `request` package to fetch the data from the API.
-- Writes the file to a local file using python's `json` package.
-- Uses try and except to catch and log network error.
-- Has two layers of retrial one native to the `request` package and one through configuring Luigi's scheduler as shown in `luigi.cfg`.
-- Task is idempotent as the output file is recorded in the overriden `output` function of Luigi which natively ensures that the task is idempotent.
+### Extra tasks
+Two Extra tasks were created to create a Database and a Table that could be run independtly, however, they should not be included in the workflow because:
+1. It is a bad practice to couple processing tasks with infrastructure management tasks.
+1. You can't as Luigi checks the task completion before it checks the required dependency completion which will create circurlar dependency.
 
-**Improvements**:
-1. Unit tests could be improved by using `luigi.MockTarget` to test writing to a file instead of creating a tmp file.
+## Configurations
+There are two configuration files:
+
+1. `luigi.cfg`
+    1. It points to the logging configurations.
+    1. Configure retrials procedure for failed tasks.
+1. `logging.conf`
+    1. Configure logging targets
+    1. Configure logging levels for each target
+    1. Configure logging format
+
+## Unit tests
+Unit tests have been implemented for most of the pipeline using the python library `unittest` and they are all written in the directory `test`. However, Unit tests have been skipped for the optional task due to lack of time. To run the tests, you can use the following command `python -m unittest test.json_api_fetch_test`.
