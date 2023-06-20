@@ -21,8 +21,11 @@ class DataCleaningTask(luigi.Task):
         return luigi.LocalTarget(self.staging_path)
 
     def run(self):
+        logger.info("Starting Luigi task to Validate and clean raw data")
         self.read_data()
 
+        logger.info(
+            "Validating data format is as expected and will not break production before loading it for business")
         expected_schema = pd.Series({
             "userId": np.dtype(int),
             "id": np.dtype(int),
@@ -37,6 +40,8 @@ class DataCleaningTask(luigi.Task):
         int_cols = ["userId"]
         self.validate_int_values(int_cols)
 
+        logger.info(
+            "Check and ensure data completness and consistency")
         self.check_and_fill_na()
 
         unique_columns_combination = ["userId", "id"]
@@ -45,6 +50,7 @@ class DataCleaningTask(luigi.Task):
         lower_case_columns = ["title", "body"]
         self.transform_all_strings_to_lower_case(lower_case_columns)
 
+        logger.info("Data is complete, writing to stagging layer")
         self.write_output()
 
     def read_data(self):
@@ -57,26 +63,23 @@ class DataCleaningTask(luigi.Task):
             )
             raise Exception("Illegal Argument data schema mismatch")
 
-    def validate_str_values(self, str_cols: list[str]) -> bool:
-        is_valid = True
+    def validate_str_values(self, str_cols: list[str]):
+
         for col in str_cols:
             if not self.is_string_series(self.df[col]):
                 # Logged as error to indicate its an illegal value that might break production
                 logger.error(
                     f"{col} should contain only strings but it doesn't")
-                is_valid = False
+                raise Exception(
+                    "Illegal Argument non string data when it is expected to be string")
 
-        return is_valid
-
-    def validate_int_values(self, int_cols: list[str]) -> bool:
-        is_valid = True
+    def validate_int_values(self, int_cols: list[str]):
         for col in int_cols:
             if not (self.df[col] < 11).all():
                 # Logged as error to indicate its an illegal value that might break production
                 logger.error(f"{col} contain out of range values")
-                is_valid = False
-
-        return is_valid
+                raise Exception(
+                    "Illegal Argument integer values are out of range")
 
     def is_string_series(self, series: pd.Series) -> bool:
         if isinstance(series.dtype, pd.StringDtype):
