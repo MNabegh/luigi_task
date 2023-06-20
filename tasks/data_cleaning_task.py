@@ -51,7 +51,7 @@ class DataCleaningTask(luigi.Task):
         lower_case_columns = ["title", "body"]
         self.transform_all_strings_to_lower_case(lower_case_columns)
 
-        logger.info("Data is complete, writing to stagging layer")
+        logger.info("Data cleaning is complete, writing to stagging layer")
         self.write_output()
         logger.info("Cleaned data has been written to the stagging layer")
 
