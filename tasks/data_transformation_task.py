@@ -23,16 +23,20 @@ class DataTransformationTask(luigi.Task):
         return luigi.LocalTarget(self.transformation_path)
 
     def run(self):
+        logger.info("Starting Luigi task to transform data into business logic")
         self.read_data()
 
-        # After checking every post has 4 lines, altough this is not dynamic.
-        # It is just to show some useful transformation that constructs denormalised data
+        logger.info("Perform transformation step")
         old_col = "body"
         new_cols = ["body_1", "body_2", "body_3", "body_4"]
 
         self.transform_data(old_col, new_cols)
 
+        logger.info(
+            "Data transformation is complete, writing to business layer"
+        )
         self.write_output()
+        logger.info("Transformed data has been written to the business layer")
 
     def read_data(self):
 
