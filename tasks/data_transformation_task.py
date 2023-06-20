@@ -11,15 +11,13 @@ logger = logging.getLogger("luigi-interface")
 
 
 class DataTransformationTask(luigi.Task):
-    # output_path = "data.json"  # Output file path
-    # json_path = "https://jsonplaceholder.typicode.com/posts"
-    json_url = luigi.Parameter()
+    url_to_json_file = luigi.Parameter()
     json_path = luigi.Parameter()
-    stagging_path = luigi.Parameter()
+    staging_path = luigi.Parameter()
     transformation_path = luigi.Parameter()
 
     def requires(self):
-        return DataCleaningTask(self.json_url, self.json_path, self.stagging_path)
+        return DataCleaningTask(self.url_to_json_file, self.json_path, self.staging_path)
 
     def output(self):
         return luigi.LocalTarget(self.transformation_path)
@@ -37,16 +35,22 @@ class DataTransformationTask(luigi.Task):
         self.write_output()
 
     def read_data(self):
-        self.df = pd.read_parquet(self.stagging_path)
+
+        self.df = pd.read_parquet(self.staging_path)
 
     def transform_data(self, old_col, new_cols):
+        """
+        This function assumes that the text in the column {old_col} has specific number of lines that we want to split
+        into multiple columns represented by {new_cols}.
+        """
         splitted_df = self.df[old_col].str.split(
             "\n", expand=True)
 
         logger.debug(
             f"Longest posts have {splitted_df.shape[1]} lines while expected is {len(new_cols)}")
 
-        # The subscript at the end to make it more robust in case we have more than 4 lines
+        # If the input has more lines than the number of expected columns in {new_cols}
+        # We take the first n lines corresponding to the expected number
         self.df[new_cols] = splitted_df.iloc[:, :len(new_cols)]
 
     def write_output(self):
