@@ -16,6 +16,7 @@ This demonstration project was built and ran locally.
 1. Install python required packages using `requirements.txt` by running the command `pip install -r requirements.txt`.
 1. Create SQL lite database.
 1. Create SQL lite table.
+1. Create logs directory in the root directory
 
 ## Workflow
 
