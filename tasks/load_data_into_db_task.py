@@ -3,7 +3,6 @@ import sqlite3
 import pandas as pd
 
 from data_transformation_task import DataTransformationTask
-from create_table_task import CreateTableTask
 
 
 class LoadDataToDatabaseTask(luigi.Task):
