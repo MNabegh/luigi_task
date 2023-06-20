@@ -4,18 +4,15 @@ import pandas as pd
 import numpy as np
 
 
-from typing import List
 from json_api_task import FetchDataFromAPI
 
 logger = logging.getLogger("luigi-interface")
 
 
 class DataCleaningTask(luigi.Task):
-    # output_path = "data.json"  # Output file path
-    # json_path = "https://jsonplaceholder.typicode.com/posts"
     json_url = luigi.Parameter()
     json_path = luigi.Parameter()
-    stagging_path = luigi.Parameter()
+    staging_path = luigi.Parameter()
 
     def requires(self):
         return FetchDataFromAPI(self.json_url, self.json_path)
@@ -26,9 +23,12 @@ class DataCleaningTask(luigi.Task):
     def run(self):
         self.read_data()
 
-        # Data Validation: Checks for corrupted data that might affect the logic later on
-        expected_schema = pd.Series({"userId": np.dtype(int), "id": np.dtype(
-            int), "title": np.dtype("O"), "body": np.dtype("O")})
+        expected_schema = pd.Series({
+            "userId": np.dtype(int),
+            "id": np.dtype(int),
+            "title": np.dtype("O"),
+            "body": np.dtype("O")
+        })
         self.validate_schema(expected_schema)
 
         str_cols = ["title", "body"]
@@ -37,14 +37,13 @@ class DataCleaningTask(luigi.Task):
         int_cols = ["userId"]
         self.validate_int_values(int_cols)
 
-        # Data completness and consistency
         self.check_and_fill_na()
 
-        subset = ["userId", "id"]
-        self.check_and_drop_duplicates(subset)
+        unique_columns_combination = ["userId", "id"]
+        self.check_and_drop_duplicates(unique_columns_combination)
 
-        columns_to_lower = ["title", "body"]
-        self.transform_all_strings_to_lower_case(columns_to_lower)
+        lower_case_columns = ["title", "body"]
+        self.transform_all_strings_to_lower_case(lower_case_columns)
 
         self.write_output()
 
@@ -53,13 +52,12 @@ class DataCleaningTask(luigi.Task):
 
     def validate_schema(self, expected_schema: pd.Series):
         if not self.df.dtypes.equals(expected_schema):
-            # Logged as error to indicate its an illegal value that might break production
             logger.error(
-                f"Retrieved data has different schema from expected:\nActual schema: {self.df.dtypes}\nExpexted schema: {expected_schema}")
-            # Exception raised to indicate that we can not continue operating on this data
+                f"Retrieved data has different schema from expected:\nActual schema: {self.df.dtypes}\nExpexted schema: {expected_schema}"
+            )
             raise Exception("Illegal Argument data schema mismatch")
 
-    def validate_str_values(self, str_cols: List[str]) -> bool:
+    def validate_str_values(self, str_cols: list[str]) -> bool:
         is_valid = True
         for col in str_cols:
             if not self.is_string_series(self.df[col]):
@@ -70,7 +68,7 @@ class DataCleaningTask(luigi.Task):
 
         return is_valid
 
-    def validate_int_values(self, int_cols: List[str]) -> bool:
+    def validate_int_values(self, int_cols: list[str]) -> bool:
         is_valid = True
         for col in int_cols:
             if not (self.df[col] < 11).all():
@@ -80,42 +78,55 @@ class DataCleaningTask(luigi.Task):
 
         return is_valid
 
-    def is_string_series(self, s: pd.Series) -> bool:
-        if isinstance(s.dtype, pd.StringDtype):
-            # The series was explicitly created as a string series (Pandas>=1.0.0)
+    def is_string_series(self, series: pd.Series) -> bool:
+        if isinstance(series.dtype, pd.StringDtype):
             return True
-        elif s.dtype == "object":
-            # Object series, check each value
-            return all((v is None) or isinstance(v, str) for v in s)
+        elif series.dtype == "object":
+            return all((value is None) or isinstance(value, str) for value in series)
         else:
             return False
 
-    def check_and_fill_na(self) -> pd.DataFrame:
+    def check_and_fill_na(self):
         na_indicies = np.where(self.df.isna().any(axis=1))[0]
 
         logger.debug(f"{na_indicies} these rows contain NA values")
 
         # Fill NaN values based on column type
         for col in self.df.columns:
-            if self.df[col].dtype == "object":
-                self.df.loc[self.df[col].isna(), col] = self.df.loc[self.df[col].isna()
-                                                                    ].fillna("Unknown")
-            elif self.df[col].dtype == "int64" or self.df[col].dtype == "float64":
-                self.df.loc[self.df[col].isna(
-                ), col] = self.df.loc[self.df[col].isna()].fillna(0)
+            if self.is_object_column(col):
+                self.replace_na_with_unknown_in_column(col)
+            elif self.is_numeric_column(col):
+                self.replace_na_with_zero_in_column(col)
 
-    def check_and_drop_duplicates(self, subset: List[str]):
+    def is_object_column(self, col: pd.Series) -> bool:
+        return self.df[col].dtype == "object"
+
+    def is_numeric_column(self, col: pd.Series) -> bool:
+        return self.df[col].dtype == "int64" or self.df[col].dtype == "float64"
+
+    def replace_na_with_unknown_in_column(self, col: pd.Series):
+        self.df.loc[self.df[col].isna(), col] = \
+            self.df.loc[self.df[col].isna()].fillna("Unknown")
+
+    def replace_na_with_zero_in_column(self, col: pd.Series):
+        self.df.loc[self.df[col].isna(), col] = \
+            self.df.loc[self.df[col].isna()].fillna(0)
+
+    def check_and_drop_duplicates(self, unique_columns_combination: list[str]):
         # Check if the combination of subset columns is unique
-        is_unique = ~self.df.duplicated(subset=subset)
+        is_row_signature_unique = ~self.df.duplicated(
+            subset=unique_columns_combination)
 
-        duplicated_indices = np.where(~is_unique)[0]
+        rows_with_duplicated_signature_indices = np.where(
+            ~is_row_signature_unique)[0]
 
-        logger.debug(f"{duplicated_indices} these rows contained NA values")
+        logger.debug(
+            f"{rows_with_duplicated_signature_indices} these rows have duplicated signature")
 
         # Drop the duplicated combinations
-        self.df = self.df[is_unique]
+        self.df = self.df[is_row_signature_unique]
 
-    def transform_all_strings_to_lower_case(self, columns_to_lower: List[str]):
+    def transform_all_strings_to_lower_case(self, columns_to_lower: list[str]):
         self.df[columns_to_lower] = self.df[columns_to_lower].apply(
             lambda x: x.str.lower())
 
