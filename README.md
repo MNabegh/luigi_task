@@ -13,6 +13,7 @@ This demonstration project was built and ran locally.
 
 ## Prerequistes to run it.
 
+1. Python version >= 3.9
 1. Install Luigi framework.
 1. Add this directory and the task directory to the `$PYTHONPATH` environment variable by running the command `export PYTHONPATH=$(pwd):$(pwd)/tasks` in the root directory for this project on Linux machines.
 1. Install python required packages using `requirements.txt` by running the command `pip install -r requirements.txt`.
