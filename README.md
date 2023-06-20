@@ -17,6 +17,8 @@ This demonstration project was built and ran locally.
 1. Create SQL lite database.
 1. Create SQL lite table.
 1. Create logs directory in the root directory
+1. Create data directory in the root directory
+1. Create db directory in the root directory
 
 ## Workflow
 
