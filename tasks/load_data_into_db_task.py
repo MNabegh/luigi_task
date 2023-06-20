@@ -22,22 +22,17 @@ class LoadDataToDatabaseTask(luigi.Task):
         )
 
     def output(self):
-        # Output target to mark the task as complete
         return DatabaseLoadedTarget(self.db_connection_string, self.table_name)
 
     def run(self):
-        # Read the transformed data from the Parquet file
         transformed_data = pd.read_parquet(self.transformation_path)
 
-        # Connect to the database
         conn = sqlite3.connect(self.db_connection_string)
         cursor = conn.cursor()
 
-        # Insert the cleaned data into the database table
         transformed_data.to_sql(self.table_name, conn,
                                 if_exists='replace', index=False)
 
-        # Commit the changes and close the connection
         conn.commit()
         conn.close()
 
@@ -51,7 +46,6 @@ class DatabaseLoadedTarget(luigi.Target):
         conn = sqlite3.connect(self.db_connection_string)
         cursor = conn.cursor()
 
-        # Check if the table contains any data
         cursor.execute(f"SELECT COUNT(*) FROM {self.table_name};")
         result = cursor.fetchone()[0]
 
