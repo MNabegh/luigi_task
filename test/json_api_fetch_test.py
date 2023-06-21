@@ -9,11 +9,12 @@ from tasks.json_api_task import FetchDataFromAPI
 
 class TestFetchDataFromAPI(unittest.TestCase):
     def setUp(self):
-        self.correct_json_url = "https://example.com/data.json"
-        self.output_path = "/tmp/data.json"
+        self.correct_url_to_json_file = "https://example.com/data.json"
+        self.json_local_path = "/tmp/data.json"
         self.data = [{"id": 1, "title": "Post 1"}, {"id": 2, "title": "Post 2"}]
         self.task = FetchDataFromAPI(
-            json_url=self.correct_json_url, output_path=self.output_path
+            url_to_json_file=self.correct_url_to_json_file,
+            json_local_path=self.json_local_path,
         )  # Pass the correct URL to the task
 
     def test_success_write_file(self):
@@ -22,11 +23,11 @@ class TestFetchDataFromAPI(unittest.TestCase):
 
         # Assert that the file was created
         self.assertTrue(
-            os.path.exists(self.output_path), "Output file was not created."
+            os.path.exists(self.json_local_path), "Output file was not created."
         )
 
         # Read the file contents
-        with open(self.output_path, "r") as file:
+        with open(self.json_local_path, "r") as file:
             content = file.read()
 
         # Assert the file contents
@@ -36,7 +37,7 @@ class TestFetchDataFromAPI(unittest.TestCase):
         )
 
         # Clean up - delete the file
-        os.remove(self.output_path)
+        os.remove(self.json_local_path)
 
     @patch("requests.get")
     def test_request_file_success(self, mock_requests_get):
@@ -49,7 +50,7 @@ class TestFetchDataFromAPI(unittest.TestCase):
         self.task.request_file()
 
         # Assert that the API was called with the correct URL
-        mock_requests_get.assert_called_once_with(self.correct_json_url)
+        mock_requests_get.assert_called_once_with(self.correct_url_to_json_file)
 
         # Assert that the data attribute is set correctly
         self.assertEqual(self.task.data, self.data)
