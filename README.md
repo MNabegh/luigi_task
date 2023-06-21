@@ -53,3 +53,4 @@ Unit tests have been implemented for most of the pipeline using the python libra
 
 ## Improvements
 - Testing of reading and writing files could be improved using mocks such `luigi.MockTarget` but it could not be done due to time constraints.
+- Refactoring, cleaning, and renaming variables could be done for the testing module for better code readibility and maintainbility.
