@@ -11,9 +11,8 @@ This demonstration project was built and ran locally.
 ## Prerequistes to run it.
 
 1. Python version >= 3.9
-1. Install Luigi framework.
-1. Add this directory and the task directory to the `$PYTHONPATH` environment variable by running the command `export PYTHONPATH=$(pwd):$(pwd)/tasks` in the root directory for this project on Linux machines.
 1. Install python required packages using `requirements.txt` by running the command `pip install -r requirements.txt`.
+1. Add this directory and the task directory to the `$PYTHONPATH` environment variable by running the command `export PYTHONPATH=$(pwd):$(pwd)/tasks` in the root directory for this project on Linux machines.
 1. Create SQL lite database.
 1. Create SQL lite table.
 1. Create logs directory in the root directory
@@ -50,4 +49,7 @@ There are two configuration files:
     1. Configure logging format
 
 ## Unit tests
-Unit tests have been implemented for most of the pipeline using the python library `unittest` and they are all written in the directory `test`. However, Unit tests have been skipped for the optional task due to lack of time. To run the tests, you can use the following command `python -m unittest test.json_api_fetch_test`.
+Unit tests have been implemented for most of the pipeline using the python library `unittest` and they are all written in the directory `test`. However, Unit tests have been skipped for the optional task due to lack of time. To run the tests, you can use the following command `python -m unittest test.<test_module>`.
+
+## Improvements
+- Testing of reading and writing files could be improved using mocks such `luigi.MockTarget` but it could not be done due to time constraints.
