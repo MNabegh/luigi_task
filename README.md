@@ -13,11 +13,11 @@ This demonstration project was built and ran locally.
 1. Python version >= 3.9
 1. Install python required packages using `requirements.txt` by running the command `pip install -r requirements.txt`.
 1. Add this directory and the task directory to the `$PYTHONPATH` environment variable by running the command `export PYTHONPATH=$(pwd):$(pwd)/tasks` in the root directory for this project on Linux machines.
-1. Create SQL lite database.
-1. Create SQL lite table.
 1. Create logs directory in the root directory
 1. Create data directory in the root directory
 1. Create db directory in the root directory
+1. Create SQL lite database.
+1. Create SQL lite table.
 
 ## Workflow
 
